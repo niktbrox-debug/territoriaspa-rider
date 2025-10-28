@@ -56,15 +56,27 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
 
             if (result.success) {
-                // Успех!
-                formMessage.textContent = 'Спасибо! Ваша анкета успешно отправлена.';
-                formMessage.style.color = 'green';
-                form.reset(); // Очистить форму
-                // Снова скрыть все доп. блоки
-                document.querySelectorAll('.questions-block').forEach(block => {
-                    block.style.display = 'none';
-                });
-            } else {
+    // Успех!
+    formMessage.textContent = 'Спасибо! Ваша анкета успешно отправлена. Перенаправляем вас в наш Telegram-клуб...';
+    formMessage.style.color = 'green';
+    form.reset(); 
+    document.querySelectorAll('.questions-block').forEach(block => {
+        block.style.display = 'none';
+    });
+
+    // ----------------------------------------------------
+    // НОВЫЙ КОД: Перенаправление
+    // ВСТАВЬ СЮДА СВОЮ ССЫЛКУ!
+    const telegramLink = 'https://t.me/+FKnM2bPTEnBhZDAy'; // <--- ПОМЕНЯЙ ЭТУ ССЫЛКУ!
+    // ----------------------------------------------------
+
+    // Ждем 3 секунды, чтобы пользователь успел прочитать "Спасибо"
+    setTimeout(() => {
+        window.location.href = telegramLink;
+    }, 3000); 
+
+} else {
+// ...
                 throw new Error(result.error || 'Неизвестная ошибка на сервере.');
             }
 
