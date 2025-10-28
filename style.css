@@ -1,11 +1,17 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #dbc9c9; /* Пыльно-розовый фон */
+    /* background-color: #dbc9c9;  Убрали, теперь будет изображение */
+    background-image: url('background.jpg'); /* <--- ВСТАВЬ ИМЯ СВОЕГО ФАЙЛА! */
+    background-size: cover; /* Изображение будет покрывать весь фон */
+    background-position: center; /* Центрируем изображение */
+    background-attachment: fixed; /* Изображение будет зафиксировано при прокрутке */
     color: #333;
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 20px;
+    min-height: 100vh; /* Гарантируем, что фон занимает всю высоту */
+    margin: 0; /* Убираем стандартные отступы */
 }
 
 .container {
