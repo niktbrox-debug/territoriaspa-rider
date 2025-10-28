@@ -1,5 +1,5 @@
 // Импортируем 'node-fetch' (он будет доступен на Netlify)
-const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+const fetch = require('node-fetch');
 
 // Основная функция-обработчик
 exports.handler = async function(event, context) {
