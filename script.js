@@ -33,7 +33,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Обработка отправки формы
     form.addEventListener('submit', async (e) => {
-        e.preventDefault(); // Запретить обычную отправку
+    e.preventDefault(); // Остановить стандартную отправку формы
+
+    // --- НОВЫЙ БЛОК: Улучшенная валидация телефона ---
+    const phoneInput = document.getElementById('phone'); // Получаем элемент поля
+    const phoneNumber = phoneInput.value.replace(/\D/g, ''); // Удаляем все не-цифры (пробелы, скобки, +)
+
+    // Проверяем, что осталось минимум 10 цифр (для России/СНГ это обычно 10 или 11)
+    if (phoneNumber.length < 10) { 
+        formMessage.textContent = 'Ошибка! Пожалуйста, введите полный номер телефона (минимум 10 цифр).';
+        formMessage.style.color = 'red';
+        return; // Останавливаем дальнейшую отправку
+    }
+    // --- КОНЕЦ НОВОГО БЛОКА ---
+    
+    // ... остальной код (запуск спиннера, отправка запроса и т.д.) идет здесь
+    
+    // Запускаем спиннер, блокируем кнопку и очищаем сообщение об ошибке
+    formMessage.textContent = 'Отправка...';
+    formMessage.style.color = 'orange';
+    submitButton.disabled = true;
+
+    // ... далее идет остальной, старый код
         submitBtn.disabled = true;
         submitBtn.textContent = 'Отправка...';
         formMessage.textContent = '';
