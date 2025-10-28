@@ -1,0 +1,127 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #dbc9c9; /* Пыльно-розовый фон */
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    background-color: #fcf2f2; /* Очень светлый розовый/бежевый */
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
+}
+
+h2 {
+    text-align: center;
+    color: #5d4a4a;
+    margin-bottom: 10px;
+}
+
+p {
+    text-align: center;
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 25px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    font-weight: bold;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    color: #5d4a4a;
+}
+
+input[type="text"],
+input[type="tel"],
+textarea,
+select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; /* Важно для padding */
+    font-size: 1em;
+}
+
+textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+input[type="radio"],
+input[type="checkbox"] {
+    margin-right: 8px;
+}
+
+form label {
+    display: block; /* Заставляет radio/checkbox быть на новой строке */
+}
+
+/* Группировка radio/checkbox */
+form label input[type="radio"],
+form label input[type="checkbox"] {
+    display: inline-block; /* Возвращаем в линию с текстом */
+    width: auto;
+    margin-bottom: 0;
+}
+
+/* Делаем текст рядом с radio/checkbox нежирным */
+form label:has(input[type="radio"]),
+form label:has(input[type="checkbox"]) {
+    font-weight: normal;
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+
+.questions-block {
+    display: none; /* Скрыто по умолчанию */
+    border-top: 2px solid #dbc9c9;
+    margin-top: 20px;
+    padding-top: 15px;
+}
+
+.questions-block h3 {
+    color: #5d4a4a;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+}
+
+button[type="submit"] {
+    background-color: #5d4a4a; /* Темный цвет, как на кнопке "Отправить" */
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: bold;
+    margin-top: 25px;
+    transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+    background-color: #4a3b3b;
+}
+
+button[type="submit"]:disabled {
+    background-color: #999;
+    cursor: not-allowed;
+}
+
+#form-message {
+    text-align: center;
+    margin-top: 15px;
+    font-weight: bold;
+}
