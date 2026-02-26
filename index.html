@@ -9,6 +9,9 @@
 </head>
 <body>
 
+    <!-- Конфетти -->
+    <canvas id="confetti-canvas"></canvas>
+
     <!-- Модальное окно успеха -->
     <div id="success-modal" class="modal-overlay" style="display:none;">
         <div class="modal-card">
@@ -17,6 +20,11 @@
             <p>Благодарим вас. Мы уже готовимся к вашему визиту и сделаем его незабываемым.</p>
             <div class="modal-loader"></div>
         </div>
+    </div>
+
+    <!-- Прогресс-бар -->
+    <div id="progress-bar-wrap">
+        <div id="progress-bar"></div>
     </div>
 
     <div class="container">
@@ -28,8 +36,7 @@
             <div class="divider">
                 <span class="divider-icon">✦ ✦ ✦</span>
             </div>
-            <p>Позвольте нам узнать вас немного лучше,<br>чтобы ваш визит был по-настоящему особенным</p>
-
+            <p id="greeting-text">Позвольте нам узнать вас немного лучше,<br>чтобы ваш визит был по-настоящему особенным</p>
         </div>
 
         <form id="spa-form">
@@ -37,29 +44,61 @@
             <!-- Имя -->
             <div class="field-group">
                 <label for="name">Ваше имя</label>
-                <input type="text" id="name" name="name" placeholder="Как вас зовут?" required>
+                <input type="text" id="name" name="name"
+                    placeholder="Как вас зовут?"
+                    autocomplete="given-name"
+                    autocapitalize="words"
+                    inputmode="text"
+                    required>
             </div>
 
             <!-- Телефон -->
             <div class="field-group">
                 <label for="phone">Номер телефона</label>
-                <input type="tel" id="phone" name="phone" placeholder="+7 (___) ___-__-__" required>
+                <input type="tel" id="phone" name="phone"
+                    placeholder="+7 (___) ___-__-__"
+                    autocomplete="tel"
+                    inputmode="tel"
+                    maxlength="18"
+                    required>
                 <span id="phone-error" class="field-error"></span>
             </div>
 
-            <!-- Категория -->
+            <!-- Категория — карточки -->
             <div class="field-group">
-                <label for="category-select">Категория услуг</label>
-                <select id="category-select" name="category" required>
-                    <option value="">— Выберите услугу —</option>
-                    <option value="Массаж">Массаж</option>
-                    <option value="Спа для тела">Спа для тела</option>
-                    <option value="Спа для волос">Спа для волос</option>
-                    <option value="Спа для тела и волос">Спа для тела и волос</option>
-                    <option value="Косметология">Косметология</option>
-                    <option value="Депиляции">Депиляции</option>
-                    <option value="Уходы для волос">Уходы для волос</option>
-                </select>
+                <label>Категория услуг</label>
+                <input type="hidden" id="category-select" name="category" required>
+                <div class="service-grid" id="service-grid">
+                    <button type="button" class="service-card" data-value="Массаж">
+                        <span class="service-icon">♨</span>
+                        <span class="service-name">Массаж</span>
+                    </button>
+                    <button type="button" class="service-card" data-value="Спа для тела">
+                        <span class="service-icon">🛁</span>
+                        <span class="service-name">Спа для тела</span>
+                    </button>
+                    <button type="button" class="service-card" data-value="Спа для волос">
+                        <span class="service-icon">💧</span>
+                        <span class="service-name">Спа для волос</span>
+                    </button>
+                    <button type="button" class="service-card" data-value="Спа для тела и волос">
+                        <span class="service-icon">✨</span>
+                        <span class="service-name">Спа тела и волос</span>
+                    </button>
+                    <button type="button" class="service-card" data-value="Косметология">
+                        <span class="service-icon">🌸</span>
+                        <span class="service-name">Косметология</span>
+                    </button>
+                    <button type="button" class="service-card" data-value="Депиляции">
+                        <span class="service-icon">🌿</span>
+                        <span class="service-name">Депиляции</span>
+                    </button>
+                    <button type="button" class="service-card" data-value="Уходы для волос">
+                        <span class="service-icon">🪷</span>
+                        <span class="service-name">Уходы для волос</span>
+                    </button>
+                </div>
+                <span id="service-error" class="field-error"></span>
             </div>
 
             <!-- ──────── БЛОКИ УСЛУГ ──────── -->
