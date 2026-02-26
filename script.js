@@ -11,11 +11,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const confettiCanvas = document.getElementById('confetti-canvas');
 
     // ── Маска телефона ──
-    phoneInput.addEventListener('input', (e) => {
-        let val = e.target.value.replace(/\D/g, '');
-        if (val.startsWith('8')) val = '7' + val.slice(1);
-        if (val.startsWith('7') && val.length > 1) {
-            let m = val.match(/^7(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})$/);
+    function formatPhone(val) {
+        let digits = val.replace(/\D/g, '');
+        if (!digits) return '';
+        if (digits.startsWith('8')) digits = '7' + digits.slice(1);
+        if (digits === '7') return '+7 (';
+        if (digits.startsWith('7')) {
+            const m = digits.match(/^7(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})$/);
             if (m) {
                 let out = '+7';
                 if (m[1]) out += ' (' + m[1];
@@ -25,21 +27,46 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (m[3]) out += m[3];
                 if (m[3].length === 2) out += '-';
                 if (m[4]) out += m[4];
-                e.target.value = out;
+                return out;
             }
-        } else if (val.length === 0) {
-            e.target.value = '';
-        } else if (!val.startsWith('7')) {
-            e.target.value = '+7 (' + val.slice(0, 3);
         }
+        return '+7 (' + digits.slice(0, 3);
+    }
+
+    phoneInput.addEventListener('input', (e) => {
+        e.target.value = formatPhone(e.target.value);
         updateProgress();
     });
 
     phoneInput.addEventListener('keydown', (e) => {
-        // Не даём удалить "+7 (" целиком — только цифры
-        if (e.key === 'Backspace' && phoneInput.value === '+7 (') {
+        if (e.key !== 'Backspace') return;
+
+        const { selectionStart, selectionEnd, value } = phoneInput;
+
+        // Если всё выделено — позволяем стандартное удаление
+        if (selectionStart === 0 && selectionEnd === value.length) {
+            return;
+        }
+
+        // Специальный случай: не даём "подвисать" на "+7 ("
+        if (value === '+7 (') {
             e.preventDefault();
             phoneInput.value = '';
+            updateProgress();
+            return;
+        }
+
+        // Удаляем именно последнюю цифру, а не разделители
+        if (selectionStart === selectionEnd) {
+            e.preventDefault();
+            let digits = value.replace(/\D/g, '');
+            if (!digits) {
+                phoneInput.value = '';
+            } else {
+                digits = digits.slice(0, -1);
+                phoneInput.value = digits ? formatPhone(digits) : '';
+            }
+            updateProgress();
         }
     });
 

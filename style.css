@@ -386,8 +386,10 @@ input.input-error {
 }
 
 /* ── Метки вопросов (не radio/checkbox) ── */
-.questions-block > label,
-#common-questions > label {
+.questions-block > label:not(:has(input)),
+#common-questions > label:not(:has(input)),
+#drink-tea-block > label:not(:has(input)),
+#drink-choice-block > label:first-child {
     font-size: 10px;
     font-weight: 500;
     letter-spacing: 2px;
