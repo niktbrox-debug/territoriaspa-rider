@@ -7,74 +7,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const successModal = document.getElementById('success-modal');
     const nameInput = document.getElementById('name');
     const greetingText = document.getElementById('greeting-text');
-    const progressBar = document.getElementById('progress-bar');
-    const confettiCanvas = document.getElementById('confetti-canvas');
-
-    // ── Маска телефона ──
-    phoneInput.addEventListener('input', (e) => {
-        let val = e.target.value.replace(/\D/g, '');
-        if (val.startsWith('8')) val = '7' + val.slice(1);
-        if (val.startsWith('7') && val.length > 1) {
-            let m = val.match(/^7(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})$/);
-            if (m) {
-                let out = '+7';
-                if (m[1]) out += ' (' + m[1];
-                if (m[1].length === 3) out += ') ';
-                if (m[2]) out += m[2];
-                if (m[2].length === 3) out += '-';
-                if (m[3]) out += m[3];
-                if (m[3].length === 2) out += '-';
-                if (m[4]) out += m[4];
-                e.target.value = out;
-            }
-        } else if (val.length === 0) {
-            e.target.value = '';
-        } else if (!val.startsWith('7')) {
-            e.target.value = '+7 (' + val.slice(0, 3);
-        }
-        updateProgress();
-    });
-
-    phoneInput.addEventListener('keydown', (e) => {
-        // Не даём удалить "+7 (" целиком — только цифры
-        if (e.key === 'Backspace' && phoneInput.value === '+7 (') {
-            e.preventDefault();
-            phoneInput.value = '';
-        }
-    });
-
-    phoneInput.addEventListener('focus', () => {
-        if (!phoneInput.value) phoneInput.value = '+7 (';
-    });
-
-    phoneInput.addEventListener('blur', () => {
-        if (phoneInput.value === '+7 (') phoneInput.value = '';
-    });
-
-    // ── Автофокус: имя → телефон ──
-    nameInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            phoneInput.focus();
-        }
-    });
-
-    // ── Прогресс-бар ──
-    // Считаем: имя + телефон + категория + пожелания (опц.) = 3 обязательных шага
-    function updateProgress() {
-        const hasName     = nameInput.value.trim().length > 0;
-        const hasPhone    = phoneInput.value.replace(/\D/g, '').length >= 10;
-        const hasCategory = categoryInput.value !== '';
-        const hasWishes   = document.getElementById('wishes').value.trim().length > 0;
-
-        const filled = [hasName, hasPhone, hasCategory].filter(Boolean).length;
-        const bonus  = hasWishes ? 0.5 : 0;
-        const pct    = Math.round(((filled + bonus) / 3) * 100);
-        progressBar.style.width = Math.min(pct, 100) + '%';
-    }
-
-    nameInput.addEventListener('input', updateProgress);
-    document.getElementById('wishes').addEventListener('input', updateProgress);
 
     // Категории, которые используют блок "напиток" вместо "чай"
     const drinkChoiceCategories = ['Косметология', 'Депиляции', 'Уходы для волос'];
@@ -148,12 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     serviceCards.forEach(card => {
-        card.addEventListener('click', () => {
-            selectCategory(card.dataset.value);
-            // Тактильный отклик
-            if (navigator.vibrate) navigator.vibrate(30);
-            updateProgress();
-        });
+        card.addEventListener('click', () => selectCategory(card.dataset.value));
     });
 
     // Валидация телефона
@@ -210,9 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
 
             if (result.success) {
-                // Конфетти + модальное окно успеха
-                launchConfetti();
-                progressBar.style.width = '100%';
+                // Показать модальное окно успеха
                 successModal.style.display = 'flex';
                 form.reset();
                 categoryInput.value = '';
@@ -222,7 +147,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     block.style.display = 'none';
                 });
                 greetingText.innerHTML = defaultGreeting;
-                setTimeout(() => { progressBar.style.width = '0%'; }, 3500);
 
                 setTimeout(() => {
                     window.location.href = 'https://t.me/+FKnM2bPTEnBhZDAy';
@@ -239,69 +163,6 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.textContent = 'Отправить';
         }
     });
-
-    // ── Конфетти ──
-    function launchConfetti() {
-        const canvas = confettiCanvas;
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        canvas.style.display = 'block';
-
-        const colors = ['#c9a96e', '#f0d090', '#e8ddd4', '#a07840', '#ffffff', '#d4b896'];
-        const particles = Array.from({ length: 120 }, () => ({
-            x: Math.random() * canvas.width,
-            y: -20,
-            r: Math.random() * 7 + 3,
-            color: colors[Math.floor(Math.random() * colors.length)],
-            vx: (Math.random() - 0.5) * 3,
-            vy: Math.random() * 4 + 2,
-            opacity: 1,
-            rotation: Math.random() * 360,
-            rotSpeed: (Math.random() - 0.5) * 6,
-            shape: Math.random() > 0.5 ? 'circle' : 'rect',
-        }));
-
-        let frame;
-        function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            let alive = false;
-            particles.forEach(p => {
-                if (p.opacity <= 0) return;
-                alive = true;
-                ctx.save();
-                ctx.globalAlpha = p.opacity;
-                ctx.fillStyle = p.color;
-                ctx.translate(p.x, p.y);
-                ctx.rotate((p.rotation * Math.PI) / 180);
-                if (p.shape === 'circle') {
-                    ctx.beginPath();
-                    ctx.arc(0, 0, p.r, 0, Math.PI * 2);
-                    ctx.fill();
-                } else {
-                    ctx.fillRect(-p.r, -p.r / 2, p.r * 2, p.r);
-                }
-                ctx.restore();
-                p.x += p.vx;
-                p.y += p.vy;
-                p.vy += 0.08;
-                p.rotation += p.rotSpeed;
-                if (p.y > canvas.height * 0.7) p.opacity -= 0.025;
-            });
-            if (alive) {
-                frame = requestAnimationFrame(draw);
-            } else {
-                canvas.style.display = 'none';
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-            }
-        }
-        draw();
-        setTimeout(() => {
-            cancelAnimationFrame(frame);
-            canvas.style.display = 'none';
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-        }, 4000);
-    }
 
     // Сборка сообщения для Telegram (HTML-форматирование)
     function buildMessage() {
