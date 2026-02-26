@@ -43,7 +43,7 @@ exports.handler = async function(event, context) {
                 body: JSON.stringify({
                     chat_id: trimmedChatId,
                     text: message,
-                    parse_mode: 'HTML' // Можно использовать HTML или Markdown
+                    parse_mode: 'HTML'
                 })
             }).then(response => response.json());
         });
