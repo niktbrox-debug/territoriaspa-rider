@@ -2,51 +2,87 @@ document.addEventListener('DOMContentLoaded', () => {
     const categorySelect = document.getElementById('category-select');
     const form = document.getElementById('spa-form');
     const submitBtn = document.getElementById('submit-btn');
-    const formMessage = document.getElementById('form-message');
+    const phoneInput = document.getElementById('phone');
+    const phoneError = document.getElementById('phone-error');
+    const successModal = document.getElementById('success-modal');
 
-    // Карта, какой блок вопросов показывать
+    // Категории, которые используют блок "напиток" вместо "чай"
+    const drinkChoiceCategories = ['Косметология', 'Депиляции', 'Уходы для волос'];
+
+    // Карта: какой блок вопросов показывать для каждой категории
     const questionBlocks = {
-        'Массаж': ['q-massage', 'common-questions-1'],
-        'Спа для тела': ['q-body-spa', 'common-questions-1'],
-        'Спа для волос': ['q-hair-spa', 'common-questions-1'],
-        'Спа для тела и волос': ['q-body-hair-spa', 'common-questions-1'],
-        'Косметология': ['q-cosmetology', 'common-questions-2'],
-        'Депиляции': ['q-depilation', 'common-questions-2'],
-        'Уходы для волос': ['q-hair-care', 'common-questions-2']
+        'Массаж':              ['q-massage',       'common-questions'],
+        'Спа для тела':        ['q-body-spa',       'common-questions'],
+        'Спа для волос':       ['q-hair-spa',       'common-questions'],
+        'Спа для тела и волос':['q-body-hair-spa',  'common-questions'],
+        'Косметология':        ['q-cosmetology',    'common-questions'],
+        'Депиляции':           ['q-depilation',     'common-questions'],
+        'Уходы для волос':     ['q-hair-care',      'common-questions'],
     };
 
     categorySelect.addEventListener('change', () => {
-        const selectedValue = categorySelect.value;
-        
-        // 1. Сначала скрыть все блоки
+        const selected = categorySelect.value;
+
+        // Скрыть все блоки
         document.querySelectorAll('.questions-block').forEach(block => {
+            block.classList.remove('visible');
             block.style.display = 'none';
         });
 
-        // 2. Показать нужные блоки
-        if (questionBlocks[selectedValue]) {
-            questionBlocks[selectedValue].forEach(blockId => {
-                document.getElementById(blockId).style.display = 'block';
-            });
+        if (!questionBlocks[selected]) return;
+
+        // Переключить подблок напитка внутри common-questions
+        const isTeaCategory = !drinkChoiceCategories.includes(selected);
+        document.getElementById('drink-tea-block').style.display = isTeaCategory ? 'block' : 'none';
+        document.getElementById('drink-choice-block').style.display = isTeaCategory ? 'none' : 'block';
+
+        // Показать нужные блоки с анимацией
+        questionBlocks[selected].forEach(blockId => {
+            const block = document.getElementById(blockId);
+            block.style.display = 'block';
+            // Небольшая задержка для запуска CSS-анимации
+            requestAnimationFrame(() => block.classList.add('visible'));
+        });
+    });
+
+    // Валидация телефона
+    function validatePhone(value) {
+        // Принимаем форматы: +7..., 8..., 7... — всего 11 цифр для РФ/СНГ
+        const digits = value.replace(/\D/g, '');
+        return digits.length >= 10 && digits.length <= 12;
+    }
+
+    phoneInput.addEventListener('input', () => {
+        if (phoneError.textContent && validatePhone(phoneInput.value)) {
+            phoneError.textContent = '';
+            phoneInput.classList.remove('input-error');
         }
     });
 
     // Обработка отправки формы
     form.addEventListener('submit', async (e) => {
-        e.preventDefault(); // Запретить обычную отправку
+        e.preventDefault();
+
+        // Валидация телефона
+        if (!validatePhone(phoneInput.value)) {
+            phoneError.textContent = 'Введите корректный номер телефона (не менее 10 цифр)';
+            phoneInput.classList.add('input-error');
+            phoneInput.focus();
+            return;
+        }
+        phoneError.textContent = '';
+        phoneInput.classList.remove('input-error');
+
         submitBtn.disabled = true;
         submitBtn.textContent = 'Отправка...';
-        formMessage.textContent = '';
 
         try {
-            // 1. Собрать данные в красивое сообщение
             const message = buildMessage();
 
-            // 2. Отправить на наш "сервер" (Netlify Function)
             const response = await fetch('/.netlify/functions/send-to-telegram', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: message })
+                body: JSON.stringify({ message })
             });
 
             if (!response.ok) {
@@ -56,125 +92,105 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
 
             if (result.success) {
-    // Успех!
-    formMessage.textContent = 'Спасибо! Ваша анкета успешно отправлена. Перенаправляем вас в наш Telegram-клуб...';
-    formMessage.style.color = 'green';
-    form.reset(); 
-    document.querySelectorAll('.questions-block').forEach(block => {
-        block.style.display = 'none';
-    });
+                // Показать модальное окно успеха
+                successModal.style.display = 'flex';
+                form.reset();
+                document.querySelectorAll('.questions-block').forEach(block => {
+                    block.classList.remove('visible');
+                    block.style.display = 'none';
+                });
 
-    // ----------------------------------------------------
-    // НОВЫЙ КОД: Перенаправление
-    // ВСТАВЬ СЮДА СВОЮ ССЫЛКУ!
-    const telegramLink = 'https://t.me/+FKnM2bPTEnBhZDAy'; // <--- ПОМЕНЯЙ ЭТУ ССЫЛКУ!
-    // ----------------------------------------------------
-
-    // Ждем 3 секунды, чтобы пользователь успел прочитать "Спасибо"
-    setTimeout(() => {
-        window.location.href = telegramLink;
-    }, 3000); 
-
-} else {
-// ...
+                setTimeout(() => {
+                    window.location.href = 'https://t.me/+FKnM2bPTEnBhZDAy';
+                }, 3000);
+            } else {
                 throw new Error(result.error || 'Неизвестная ошибка на сервере.');
             }
 
         } catch (error) {
             console.error('Ошибка отправки:', error);
-            formMessage.textContent = 'Ошибка! Не удалось отправить анкету. Попробуйте позже.';
-            formMessage.style.color = 'red';
+            alert('Ошибка! Не удалось отправить анкету. Попробуйте позже.');
         } finally {
             submitBtn.disabled = false;
             submitBtn.textContent = 'Отправить';
         }
     });
 
-    // Функция для сборки сообщения
+    // Сборка сообщения для Telegram (HTML-форматирование)
     function buildMessage() {
         const formData = new FormData(form);
         const data = Object.fromEntries(formData.entries());
-        let msg = "🎉 НОВАЯ АНКЕТА С САЙТА! 🎉\n\n";
-        
-        msg += `Имя: ${data.name}\n`;
-        msg += `Телефон: ${data.phone}\n`;
-        msg += `Услуга: ${data.category}\n`;
-        msg += "------------------------------\n\n";
+        const selected = data.category;
 
-        // Добавляем ответы только из ВЫБРАННОЙ категории
-        const selectedCategory = data.category;
-        
-        if (selectedCategory === 'Массаж') {
-            msg += "=== Спа-массаж ===\n";
-            msg += `Кожные заболевания: ${data.massage_skin_issues || 'Нет'}\n`;
-            msg += `Интенсивность: ${data.massage_intensity || 'Не выбрано'}\n`;
-            msg += `Особые зоны: ${data.massage_zones || 'Нет'}\n\n`;
-        }
-        else if (selectedCategory === 'Спа для тела') {
-            msg += "=== Спа для тела ===\n";
-            msg += `Кожные заболевания: ${data.body_spa_skin_issues || 'Нет'}\n`;
-            msg += `Интенсивность: ${data.body_spa_intensity || 'Не выбрано'}\n`;
-            msg += `Особые зоны: ${data.body_spa_zones || 'Нет'}\n\n`;
-        }
-        else if (selectedCategory === 'Спа для волос') {
-            msg += "=== Спа для волос ===\n";
-            msg += `Как часто моет: ${data.hair_spa_wash || 'Не выбрано'}\n`;
-            msg += `Структура волос: ${data.hair_spa_structure || 'Не выбрано'}\n`;
-            msg += `Длина волос: ${data.hair_spa_length || 'Не выбрано'}\n\n`;
-        }
-        else if (selectedCategory === 'Спа для тела и волос') {
-            msg += "=== Cпа для тела ===\n";
-            msg += `Кожные заболевания: ${data.body_hair_skin || 'Нет'}\n`;
-            msg += `Интенсивность: ${data.body_hair_intensity || 'Не выбрано'}\n`;
-            msg += `Особые зоны: ${data.body_hair_zones || 'Нет'}\n\n`;
-            msg += "=== Cпа для волос ===\n";
-            msg += `Как часто моет: ${data.body_hair_wash || 'Не выбрано'}\n`;
-            msg += `Структура волос: ${data.body_hair_structure || 'Не выбрано'}\n`;
-            msg += `Длина волос: ${data.body_hair_length || 'Не выбрано'}\n\n`;
-        }
-        else if (selectedCategory === 'Косметология') {
-            msg += "=== Косметология ===\n";
-            msg += `Тип кожи: ${data.cosmetology_skin_type || 'Не выбрано'}\n`;
-            msg += `Инъекции: ${data.cosmetology_injections || 'Не выбрано'}\n`;
-            msg += `Предпочтения: ${data.cosmetology_prefs || 'Нет'}\n\n`;
-        }
-        else if (selectedCategory === 'Депиляции') {
-            msg += "=== Депиляции ===\n";
-            // Собираем все выбранные чекбоксы
+        let msg = '🎉 <b>НОВАЯ АНКЕТА С САЙТА!</b> 🎉\n\n';
+        msg += `👤 <b>Имя:</b> ${data.name}\n`;
+        msg += `📞 <b>Телефон:</b> ${data.phone}\n`;
+        msg += `💆 <b>Услуга:</b> ${selected}\n`;
+        msg += '──────────────────────\n\n';
+
+        if (selected === 'Массаж') {
+            msg += '💆 <b>Спа-массаж</b>\n';
+            msg += `• Кожные заболевания: ${data.massage_skin_issues || 'Нет'}\n`;
+            msg += `• Интенсивность: ${data.massage_intensity || 'Не выбрано'}\n`;
+            msg += `• Особые зоны: ${data.massage_zones || 'Нет'}\n\n`;
+        } else if (selected === 'Спа для тела') {
+            msg += '🛁 <b>Спа для тела</b>\n';
+            msg += `• Кожные заболевания: ${data.body_spa_skin_issues || 'Нет'}\n`;
+            msg += `• Интенсивность: ${data.body_spa_intensity || 'Не выбрано'}\n`;
+            msg += `• Особые зоны: ${data.body_spa_zones || 'Нет'}\n\n`;
+        } else if (selected === 'Спа для волос') {
+            msg += '💇 <b>Спа для волос</b>\n';
+            msg += `• Частота мытья: ${data.hair_spa_wash || 'Не выбрано'}\n`;
+            msg += `• Структура волос: ${data.hair_spa_structure || 'Не выбрано'}\n`;
+            msg += `• Длина волос: ${data.hair_spa_length || 'Не выбрано'}\n\n`;
+        } else if (selected === 'Спа для тела и волос') {
+            msg += '🛁 <b>Спа для тела</b>\n';
+            msg += `• Кожные заболевания: ${data.body_hair_skin || 'Нет'}\n`;
+            msg += `• Интенсивность: ${data.body_hair_intensity || 'Не выбрано'}\n`;
+            msg += `• Особые зоны: ${data.body_hair_zones || 'Нет'}\n\n`;
+            msg += '💇 <b>Спа для волос</b>\n';
+            msg += `• Частота мытья: ${data.body_hair_wash || 'Не выбрано'}\n`;
+            msg += `• Структура волос: ${data.body_hair_structure || 'Не выбрано'}\n`;
+            msg += `• Длина волос: ${data.body_hair_length || 'Не выбрано'}\n\n`;
+        } else if (selected === 'Косметология') {
+            msg += '✨ <b>Косметология</b>\n';
+            msg += `• Тип кожи: ${data.cosmetology_skin_type || 'Не выбрано'}\n`;
+            msg += `• Инъекции: ${data.cosmetology_injections || 'Не выбрано'}\n`;
+            msg += `• Предпочтения: ${data.cosmetology_prefs || 'Нет'}\n\n`;
+        } else if (selected === 'Депиляции') {
             const zones = Array.from(formData.getAll('depilation_zones')).join(', ');
-            msg += `Зоны: ${zones || 'Не выбрано'}\n`;
-            msg += `Аллергии: ${data.depilation_allergy || 'Нет'}\n`;
-            msg += `Кожные заболевания: ${data.depilation_skin_issues || 'Нет'}\n\n`;
-        }
-        else if (selectedCategory === 'Уходы для волос') {
-            msg += "=== Уходы для волос ===\n";
-            msg += `Как часто моет: ${data.hair_care_wash || 'Не выбрано'}\n`;
-            msg += `Структура волос: ${data.hair_care_structure || 'Не выбрано'}\n`;
-            msg += `Длина волос: ${data.hair_care_length || 'Не выбрано'}\n`;
-            msg += `Окрашивание: ${data.hair_care_color || 'Нет'}\n`;
-            msg += `Горячие процедуры: ${data.hair_care_procedures || 'Не выбрано'}\n`;
-            msg += `Домашний уход: ${data.hair_care_home || 'Нет'}\n`;
-            msg += `Проблема: ${data.hair_care_problem || 'Нет'}\n\n`;
+            msg += '🌿 <b>Депиляции</b>\n';
+            msg += `• Зоны: ${zones || 'Не выбрано'}\n`;
+            msg += `• Аллергии: ${data.depilation_allergy || 'Нет'}\n`;
+            msg += `• Кожные заболевания: ${data.depilation_skin_issues || 'Нет'}\n\n`;
+        } else if (selected === 'Уходы для волос') {
+            msg += '💇 <b>Уходы для волос</b>\n';
+            msg += `• Частота мытья: ${data.hair_care_wash || 'Не выбрано'}\n`;
+            msg += `• Структура волос: ${data.hair_care_structure || 'Не выбрано'}\n`;
+            msg += `• Длина волос: ${data.hair_care_length || 'Не выбрано'}\n`;
+            msg += `• Окрашивание: ${data.hair_care_color || 'Нет'}\n`;
+            msg += `• Горячие процедуры: ${data.hair_care_procedures || 'Не выбрано'}\n`;
+            msg += `• Домашний уход: ${data.hair_care_home || 'Нет'}\n`;
+            msg += `• Проблема: ${data.hair_care_problem || 'Нет'}\n\n`;
         }
 
-        // Добавляем общие вопросы
-        msg += "=== Общие вопросы ===\n";
-        if (questionBlocks[selectedCategory].includes('common-questions-1')) {
-            msg += `Рассказ мастера: ${data.master_actions || 'Не выбрано'}\n`;
-            msg += `Чай: ${data.tea_type || 'Не выбрано'}\n`;
-            msg += `Мед: ${data.tea_honey || 'Не выбрано'}\n`;
-            msg += `К чаю: ${data.tea_snack || 'Не выбрано'}\n`;
-            msg += `Дом. уход: ${data.home_care || 'Не выбрано'}\n`;
-            msg += `Лояльность: ${data.loyalty || 'Не выбрано'}\n`;
+        // Общие вопросы
+        msg += '📋 <b>Общие вопросы</b>\n';
+        msg += `• Рассказ мастера: ${data.master_actions || 'Не выбрано'}\n`;
+
+        if (!drinkChoiceCategories.includes(selected)) {
+            msg += `• Чай: ${data.tea_type || 'Не выбрано'}\n`;
+            msg += `• Мёд: ${data.tea_honey || 'Не выбрано'}\n`;
+            msg += `• К чаю: ${data.tea_snack || 'Не выбрано'}\n`;
         } else {
-            msg += `Рассказ мастера: ${data.master_actions_2 || 'Не выбрано'}\n`;
-            msg += `Напиток: ${data.drink_type || 'Не выбрано'}\n`;
-            msg += `Дом. уход: ${data.home_care_2 || 'Не выбрано'}\n`;
-            msg += `Лояльность: ${data.loyalty_2 || 'Не выбрано'}\n`;
+            msg += `• Напиток: ${data.drink_type || 'Не выбрано'}\n`;
         }
-        
-        msg += "\n------------------------------\n";
-        msg += `Доп. пожелания: ${data.wishes || 'Нет'}\n`;
+
+        msg += `• Домашний уход: ${data.home_care || 'Не выбрано'}\n`;
+        msg += `• Программа лояльности: ${data.loyalty || 'Не выбрано'}\n`;
+
+        msg += '\n──────────────────────\n';
+        msg += `📝 <b>Доп. пожелания:</b> ${data.wishes || 'Нет'}\n`;
 
         return msg;
     }
