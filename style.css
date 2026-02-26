@@ -1,641 +1,133 @@
-/* ── Шрифты ── */
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Montserrat:wght@300;400;500;600&display=swap');
-
-/* ── Сброс и базовые стили ── */
-*, *::before, *::after {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-:root {
-    --gold:      #c9a96e;
-    --gold-dark: #a07840;
-    --dark:      #1a1210;
-    --surface:   rgba(26, 18, 16, 0.88);
-    --card:      rgba(36, 26, 22, 0.96);
-    --border:    rgba(201, 169, 110, 0.25);
-    --text:      #e8ddd4;
-    --muted:     #9e8c82;
-    --error:     #d4756a;
-    --radius:    12px;
-    --radius-sm: 6px;
-    --shadow:    0 24px 80px rgba(0,0,0,0.6);
-}
-
-html {
-    scroll-behavior: smooth;
-}
-
 body {
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 300;
-    font-size: 14px;
-    color: var(--text);
-    background-image: url('background.jpg');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    /* background-color: #dbc9c9;  Убрали, теперь будет изображение */
+    background-image: url('background.jpg'); /* <--- ВСТАВЬ ИМЯ СВОЕГО ФАЙЛА! */
+    background-size: cover; /* Изображение будет покрывать весь фон */
+    background-position: center; /* Центрируем изображение */
+    background-attachment: fixed; /* Изображение будет зафиксировано при прокрутке */
+    color: #333;
     display: flex;
     justify-content: center;
-    align-items: flex-start;
-    padding: 40px 16px;
-    line-height: 1.7;
+    align-items: center;
+    padding: 20px;
+    min-height: 100vh; /* Гарантируем, что фон занимает всю высоту */
+    margin: 0; /* Убираем стандартные отступы */
 }
 
-/* ── Контейнер ── */
 .container {
-    background: var(--card);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
+    background-color: #fcf2f2; /* Очень светлый розовый/бежевый */
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     width: 100%;
-    max-width: 620px;
-    padding: 48px 44px 52px;
-    position: relative;
-    overflow: hidden;
+    max-width: 600px;
 }
 
-/* Декоративная линия сверху */
-.container::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--gold), transparent);
-}
-
-/* ── Заголовок ── */
-.logo-area {
+h2 {
     text-align: center;
-    margin-bottom: 36px;
-}
-
-.logo-area .brand {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 11px;
-    font-weight: 400;
-    letter-spacing: 6px;
-    text-transform: uppercase;
-    color: var(--gold);
-    display: block;
+    color: #5d4a4a;
     margin-bottom: 10px;
 }
 
-.logo-area h2 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 32px;
-    font-weight: 300;
-    color: var(--text);
-    letter-spacing: 2px;
-    line-height: 1.2;
+p {
+    text-align: center;
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 25px;
 }
 
-.logo-area .divider {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin: 16px 0 12px;
-}
-
-.logo-area .divider::before,
-.logo-area .divider::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--border), transparent);
-}
-
-.logo-area .divider-icon {
-    color: var(--gold);
-    font-size: 12px;
-    letter-spacing: 4px;
-}
-
-.logo-area p {
-    color: var(--muted);
-    letter-spacing: 0.5px;
-    font-style: italic;
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 17px;
-    line-height: 1.8;
-}
-
-/* ── Форма ── */
 form {
     display: flex;
     flex-direction: column;
-    gap: 0;
 }
 
-/* ── Поля ── */
-.field-group {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 20px;
-}
-
-.field-group label:first-child,
-form > label {
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 8px;
-    display: block;
+label {
+    font-weight: bold;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    color: #5d4a4a;
 }
 
 input[type="text"],
 input[type="tel"],
 textarea,
 select {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    color: var(--text);
-    font-family: 'Montserrat', sans-serif;
-    font-size: 13px;
-    font-weight: 300;
-    padding: 13px 16px;
     width: 100%;
-    transition: border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
-    -webkit-appearance: none;
-    appearance: none;
-    outline: none;
-}
-
-input[type="text"]:focus,
-input[type="tel"]:focus,
-textarea:focus,
-select:focus {
-    border-color: var(--gold);
-    background: rgba(201,169,110,0.06);
-    box-shadow: 0 0 0 3px rgba(201,169,110,0.08);
-}
-
-input[type="text"]::placeholder,
-input[type="tel"]::placeholder {
-    color: var(--muted);
-    opacity: 0.6;
-}
-
-select {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23c9a96e' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 16px center;
-    padding-right: 40px;
-    cursor: pointer;
-}
-
-select option {
-    background: #1e1512;
-    color: var(--text);
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; /* Важно для padding */
+    font-size: 1em;
 }
 
 textarea {
-    min-height: 90px;
+    min-height: 80px;
     resize: vertical;
-    line-height: 1.6;
 }
 
-input.input-error {
-    border-color: var(--error) !important;
-    box-shadow: 0 0 0 3px rgba(212,117,106,0.1);
+input[type="radio"],
+input[type="checkbox"] {
+    margin-right: 8px;
 }
 
-.field-error {
-    color: var(--error);
-    font-size: 11px;
-    margin-top: 6px;
-    letter-spacing: 0.3px;
-    min-height: 16px;
-    display: block;
+form label {
+    display: block; /* Заставляет radio/checkbox быть на новой строке */
 }
 
-/* ── Прогресс-бар ── */
-#progress-bar-wrap {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: rgba(255,255,255,0.06);
-    z-index: 999;
+/* Группировка radio/checkbox */
+form label input[type="radio"],
+form label input[type="checkbox"] {
+    display: inline-block; /* Возвращаем в линию с текстом */
+    width: auto;
+    margin-bottom: 0;
 }
 
-#progress-bar {
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(90deg, var(--gold-dark), var(--gold), #f0d090);
-    border-radius: 0 2px 2px 0;
-    transition: width 0.4s cubic-bezier(0.22,1,0.36,1);
-    box-shadow: 0 0 8px rgba(201,169,110,0.6);
+/* Делаем текст рядом с radio/checkbox нежирным */
+form label:has(input[type="radio"]),
+form label:has(input[type="checkbox"]) {
+    font-weight: normal;
+    margin-top: 8px;
+    margin-bottom: 8px;
 }
 
-/* ── Конфетти канвас ── */
-#confetti-canvas {
-    position: fixed;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 2000;
-    display: none;
-}
 
-/* ── Приветствие по имени ── */
-#greeting-text {
-    transition: opacity 0.4s ease, transform 0.4s ease;
-}
-
-#greeting-text.updating {
-    opacity: 0;
-    transform: translateY(4px);
-}
-
-/* ── Сетка карточек услуг ── */
-.service-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-top: 4px;
-}
-
-.service-card {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    color: var(--text);
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 18px 10px 16px;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 11px;
-    font-weight: 400;
-    letter-spacing: 0.5px;
-    text-align: center;
-    transition: background 0.2s ease, border-color 0.2s ease,
-                transform 0.2s ease, box-shadow 0.2s ease;
-    position: relative;
-    overflow: hidden;
-}
-
-.service-card::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(201,169,110,0.08), transparent);
-    opacity: 0;
-    transition: opacity 0.2s ease;
-}
-
-.service-card:hover {
-    background: rgba(201,169,110,0.07);
-    border-color: rgba(201,169,110,0.4);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-}
-
-.service-card:hover::after {
-    opacity: 1;
-}
-
-.service-card.selected {
-    background: rgba(201,169,110,0.14);
-    border-color: var(--gold);
-    box-shadow: 0 0 0 1px var(--gold), 0 8px 24px rgba(201,169,110,0.2);
-    color: var(--gold);
-    transform: translateY(-2px);
-}
-
-.service-card.selected::after {
-    opacity: 1;
-}
-
-.service-icon {
-    font-size: 22px;
-    line-height: 1;
-    display: block;
-}
-
-.service-name {
-    display: block;
-    line-height: 1.3;
-}
-
-/* Галочка на выбранной карточке */
-.service-card.selected::before {
-    content: '✓';
-    position: absolute;
-    top: 6px;
-    right: 8px;
-    font-size: 9px;
-    color: var(--gold);
-    font-weight: 700;
-}
-
-@media (max-width: 420px) {
-    .service-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-/* ── Блоки вопросов ── */
 .questions-block {
-    display: none;
-    margin-top: 4px;
-    margin-bottom: 4px;
-    opacity: 0;
-    transform: translateY(12px);
-    transition: opacity 0.35s ease, transform 0.35s ease;
-}
-
-.questions-block.visible {
-    opacity: 1;
-    transform: translateY(0);
+    display: none; /* Скрыто по умолчанию */
+    border-top: 2px solid #dbc9c9;
+    margin-top: 20px;
+    padding-top: 15px;
 }
 
 .questions-block h3 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 18px;
-    font-weight: 300;
-    color: var(--gold);
-    letter-spacing: 1.5px;
-    margin: 28px 0 16px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    color: #5d4a4a;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
 }
 
-.questions-block h3::before {
-    content: '';
-    display: inline-block;
-    width: 4px;
-    height: 16px;
-    background: var(--gold);
-    border-radius: 2px;
-    flex-shrink: 0;
-}
-
-/* ── Метки вопросов (не radio/checkbox) ── */
-.questions-block > label,
-#common-questions > label {
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-top: 18px;
-    margin-bottom: 8px;
-    display: block;
-}
-
-/* ── Radio / Checkbox ── */
-form label:has(input[type="radio"]),
-form label:has(input[type="checkbox"]) {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-weight: 300;
-    font-size: 13px;
-    color: var(--text);
-    letter-spacing: 0;
-    text-transform: none;
-    margin-top: 6px;
-    margin-bottom: 6px;
-    cursor: pointer;
-    padding: 8px 12px;
-    border-radius: var(--radius-sm);
-    border: 1px solid transparent;
-    transition: background 0.2s ease, border-color 0.2s ease;
-    position: relative;
-}
-
-form label:has(input[type="radio"]):hover,
-form label:has(input[type="checkbox"]):hover {
-    background: rgba(201,169,110,0.06);
-    border-color: var(--border);
-}
-
-form label:has(input[type="radio"]:checked),
-form label:has(input[type="checkbox"]:checked) {
-    background: rgba(201,169,110,0.1);
-    border-color: rgba(201,169,110,0.35);
-    color: var(--gold);
-}
-
-/* Скрыть стандартные radio/checkbox */
-input[type="radio"],
-input[type="checkbox"] {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 16px;
-    height: 16px;
-    border: 1px solid var(--border);
-    border-radius: 50%;
-    flex-shrink: 0;
-    transition: border-color 0.2s, background 0.2s;
-    position: relative;
-    cursor: pointer;
-}
-
-input[type="checkbox"] {
-    border-radius: 4px;
-}
-
-input[type="radio"]:checked,
-input[type="checkbox"]:checked {
-    background: var(--gold);
-    border-color: var(--gold);
-}
-
-input[type="radio"]:checked::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 6px;
-    height: 6px;
-    background: var(--dark);
-    border-radius: 50%;
-}
-
-input[type="checkbox"]:checked::after {
-    content: '✓';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 10px;
-    color: var(--dark);
-    font-weight: 700;
-    line-height: 1;
-}
-
-/* ── Разделитель между секциями ── */
-.section-separator {
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--border), transparent);
-    margin: 28px 0;
-}
-
-/* ── Кнопка Submit ── */
 button[type="submit"] {
-    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
-    color: var(--dark);
+    background-color: #5d4a4a; /* Темный цвет, как на кнопке "Отправить" */
+    color: white;
+    padding: 12px 20px;
     border: none;
-    border-radius: var(--radius-sm);
-    padding: 16px 32px;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 3px;
-    text-transform: uppercase;
+    border-radius: 4px;
     cursor: pointer;
-    margin-top: 32px;
-    width: 100%;
-    transition: opacity 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
-    box-shadow: 0 4px 24px rgba(201,169,110,0.25);
+    font-size: 1.1em;
+    font-weight: bold;
+    margin-top: 25px;
+    transition: background-color 0.3s ease;
 }
 
 button[type="submit"]:hover {
-    opacity: 0.9;
-    transform: translateY(-1px);
-    box-shadow: 0 8px 32px rgba(201,169,110,0.35);
-}
-
-button[type="submit"]:active {
-    transform: translateY(0);
+    background-color: #4a3b3b;
 }
 
 button[type="submit"]:disabled {
-    background: rgba(255,255,255,0.1);
-    color: var(--muted);
+    background-color: #999;
     cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
 }
 
-/* ── Модальное окно успеха ── */
-.modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(10, 6, 5, 0.85);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    animation: fadeIn 0.4s ease;
-}
-
-.modal-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 52px 44px 44px;
-    max-width: 400px;
-    width: 90%;
+#form-message {
     text-align: center;
-    box-shadow: var(--shadow);
-    animation: slideUp 0.4s cubic-bezier(0.22,1,0.36,1);
-    position: relative;
-    overflow: hidden;
-}
-
-.modal-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--gold), transparent);
-}
-
-.modal-icon {
-    width: 64px;
-    height: 64px;
-    border: 1.5px solid var(--gold);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 24px;
-    color: var(--gold);
-    font-size: 24px;
-}
-
-.modal-card h3 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 26px;
-    font-weight: 300;
-    color: var(--text);
-    letter-spacing: 1px;
-    margin-bottom: 14px;
-}
-
-.modal-card p {
-    color: var(--muted);
-    font-size: 13px;
-    line-height: 1.7;
-    margin-bottom: 32px;
-    font-style: italic;
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 16px;
-}
-
-.modal-loader {
-    width: 32px;
-    height: 32px;
-    border: 1.5px solid var(--border);
-    border-top-color: var(--gold);
-    border-radius: 50%;
-    margin: 0 auto;
-    animation: spin 0.9s linear infinite;
-}
-
-/* ── Анимации ── */
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-}
-
-@keyframes slideUp {
-    from { transform: translateY(32px); opacity: 0; }
-    to   { transform: translateY(0);    opacity: 1; }
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-
-/* ── Адаптив ── */
-@media (max-width: 520px) {
-    body {
-        padding: 0;
-        align-items: flex-start;
-    }
-    .container {
-        border-radius: 0;
-        padding: 36px 24px 40px;
-        min-height: 100vh;
-        border-left: none;
-        border-right: none;
-        border-top: none;
-    }
-    .logo-area h2 {
-        font-size: 26px;
-    }
-    .modal-card {
-        padding: 40px 28px 36px;
-    }
+    margin-top: 15px;
+    font-weight: bold;
 }
